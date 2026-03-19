@@ -21,16 +21,34 @@ public class SetupController {
 
     @GetMapping("/api/setup")
     public String primeDatabase() {
+        StringBuilder status = new StringBuilder();
+
+        // 1. Create the required User
         try {
             if (userRepository.count() == 0) {
-                userRepository.save(new User());
+                User user = new User();
+                user.setName("Founder");
+                user.setEmail("founder@hydravision.com");
+                user.setPassword("password123");
+                user.setRole("ADMIN");
+                userRepository.save(user);
+                status.append("User created safely! ");
             }
-            if (screenRepository.count() == 0) {
-                screenRepository.save(new Screen());
-            }
-            return "SUCCESS: Database Primed! You can now book your first ad.";
         } catch (Exception e) {
-            return "ALMOST THERE: You have required fields in your User or Screen entity that need to be filled out. Let me know what this says: " + e.getMessage();
+            return "USER ERROR: " + e.getMessage();
         }
+
+        // 2. Create the required Screen
+        try {
+            if (screenRepository.count() == 0) {
+                Screen screen = new Screen();
+                screenRepository.save(screen);
+                status.append("Screen created safely! ");
+            }
+        } catch (Exception e) {
+            return status.toString() + " | SCREEN ERROR: " + e.getMessage();
+        }
+
+        return "SUCCESS: " + status.toString() + "Go to your Vercel site and book the ad!";
     }
 }
