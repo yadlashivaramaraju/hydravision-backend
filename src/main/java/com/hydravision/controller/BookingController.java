@@ -1,6 +1,8 @@
 package com.hydravision.controller;
 
 import com.hydravision.entity.Booking;
+import com.hydravision.entity.Screen;
+import com.hydravision.entity.User;
 import com.hydravision.repository.BookingRepository;
 import com.hydravision.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +30,21 @@ public class BookingController {
             @RequestParam("imageFile") MultipartFile imageFile) {
 
         try {
-            String imagePath = fileStorageService.saveFile(imageFile);
+            // 1. FIXED: Calling your exact custom method name
+            String imagePath = fileStorageService.saveImageLocally(imageFile);
 
             Booking booking = new Booking();
-            booking.setUserId(userId);
-            booking.setScreenId(screenId);
+
+            // 2. FIXED: Setting the actual User object to satisfy the @ManyToOne relationship
+            User user = new User();
+            user.setId(userId);
+            booking.setUser(user);
+
+            // 3. FIXED: Setting the actual Screen object to satisfy the @ManyToOne relationship
+            Screen screen = new Screen();
+            screen.setId(screenId);
+            booking.setScreen(screen);
+
             booking.setTimeSlot(timeSlot);
             booking.setAmountPaid(amountPaid);
             booking.setImagePath(imagePath);
@@ -42,6 +54,7 @@ public class BookingController {
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Failed to create booking");
         }
     }
