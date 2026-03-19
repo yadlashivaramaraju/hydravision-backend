@@ -23,7 +23,7 @@ public class SetupController {
     public String primeDatabase() {
         StringBuilder status = new StringBuilder();
 
-        // 1. Create the required User
+        // 1. Create the User
         try {
             if (userRepository.count() == 0) {
                 User user = new User();
@@ -32,23 +32,31 @@ public class SetupController {
                 user.setPassword("password123");
                 user.setRole("ADMIN");
                 userRepository.save(user);
-                status.append("User created safely! ");
+                status.append("User created successfully! ");
+            } else {
+                status.append("User already exists. ");
             }
         } catch (Exception e) {
             return "USER ERROR: " + e.getMessage();
         }
 
-        // 2. Create the required Screen
+        // 2. Create the Screen with the exact required fields
         try {
             if (screenRepository.count() == 0) {
                 Screen screen = new Screen();
+                screen.setBasePrice(4000.0);
+                screen.setLocationName("Jubilee Hills Checkpost");
+                screen.setResolution("1920x1080");
+                screen.setStatus("ACTIVE");
                 screenRepository.save(screen);
-                status.append("Screen created safely! ");
+                status.append("Screen created successfully! ");
+            } else {
+                status.append("Screen already exists. ");
             }
         } catch (Exception e) {
             return status.toString() + " | SCREEN ERROR: " + e.getMessage();
         }
 
-        return "SUCCESS: " + status.toString() + "Go to your Vercel site and book the ad!";
+        return "SUCCESS: " + status.toString() + "Go back to your Vercel site and test the booking!";
     }
 }
