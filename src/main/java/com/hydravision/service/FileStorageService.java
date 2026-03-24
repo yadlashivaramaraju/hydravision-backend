@@ -1,35 +1,31 @@
 package com.hydravision.service;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 @Service
 public class FileStorageService {
 
+    // This grabs the secret URL from your application.properties securely
+    @Value("${cloudinary.url}")
+    private String cloudinaryUrl;
+
     public String saveImageLocally(MultipartFile file) throws IOException {
-        // 1. THE LINUX FIX: Force Java to calculate the exact Absolute Path
-        File directory = new File("uploads");
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        String absolutePath = directory.getAbsolutePath() + "/";
+        // 1. Connect to your secure Cloudinary Vault
+        Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
 
-        // 2. Generate a random name so files don't overwrite each other
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        // 2. Fire the image up to the cloud
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
 
-        // 3. Save the file to those exact absolute coordinates
-        Path targetLocation = Paths.get(absolutePath + uniqueFileName);
-        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-        // 4. Return the file name to save in MySQL
-        return uniqueFileName;
+        // 3. Cloudinary gives us back a permanent, unbreakable URL. 
+        // We return this URL so it gets saved securely into your Aiven database!
+        return uploadResult.get("secure_url").toString();
     }
 }
