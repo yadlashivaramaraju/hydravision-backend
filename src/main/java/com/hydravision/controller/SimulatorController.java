@@ -1,27 +1,22 @@
 package com.hydravision.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.hydravision.entity.Booking;
 import com.hydravision.repository.BookingRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/simulator")
+@CrossOrigin(origins = "*") // I added this so your React frontend can talk to it without CORS errors!
 public class SimulatorController {
 
     @Autowired
     private BookingRepository bookingRepository;
 
-    // The React Billboard screen will call this API every 10 seconds
     @GetMapping("/screen/{screenId}/live")
     public List<Booking> getLiveAds(@PathVariable Long screenId) {
-        // ONLY return ads that the Admin has explicitly APPROVED
         return bookingRepository.findByScreenIdAndStatus(screenId, "APPROVED");
     }
 }

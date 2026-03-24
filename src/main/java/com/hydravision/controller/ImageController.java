@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,23 +15,19 @@ import java.nio.file.Paths;
 @CrossOrigin(origins = "*")
 public class ImageController {
 
-    // This intercepts any request to /uploads/your-image-name.jpg
     @GetMapping("/uploads/{filename:.+}")
     public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
         try {
-            // 1. Find the exact path on Render's Linux hard drive
-            Path file = Paths.get("uploads").resolve(filename).normalize();
+            // Looking in the exact same Absolute Path we used to save it!
+            String absolutePath = new File("uploads").getAbsolutePath() + "/";
+            Path file = Paths.get(absolutePath).resolve(filename).normalize();
+            
             Resource resource = new UrlResource(file.toUri());
 
-            // 2. If the file exists, hand it directly to the React frontend
             if (resource.exists() || resource.isReadable()) {
                 String contentType = Files.probeContentType(file);
-                if (contentType == null) {
-                    contentType = "image/jpeg";
-                }
-                
                 return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(contentType))
+                        .contentType(MediaType.parseMediaType(contentType != null ? contentType : "image/jpeg"))
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             } else {
