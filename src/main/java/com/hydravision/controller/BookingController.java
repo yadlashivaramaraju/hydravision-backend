@@ -23,7 +23,7 @@ import com.hydravision.service.FileStorageService;
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "https://hydravision-frontend.vercel.app") 
 public class BookingController {
 
     @Autowired

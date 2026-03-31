@@ -1,15 +1,20 @@
 package com.hydravision.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.hydravision.entity.Booking;
 import com.hydravision.repository.BookingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/simulator")
-@CrossOrigin(origins = "*") // I added this so your React frontend can talk to it without CORS errors!
+@CrossOrigin(origins = "https://hydravision-frontend.vercel.app") // I added this so your React frontend can talk to it without CORS errors!
 public class SimulatorController {
 
     @Autowired

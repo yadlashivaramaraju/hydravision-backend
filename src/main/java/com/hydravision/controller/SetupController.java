@@ -1,16 +1,17 @@
 package com.hydravision.controller;
 
-import com.hydravision.entity.Screen;
-import com.hydravision.entity.User;
-import com.hydravision.repository.ScreenRepository;
-import com.hydravision.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hydravision.entity.Screen;
+import com.hydravision.entity.User;
+import com.hydravision.repository.ScreenRepository;
+import com.hydravision.repository.UserRepository;
+
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://hydravision-frontend.vercel.app")
 public class SetupController {
 
     @Autowired

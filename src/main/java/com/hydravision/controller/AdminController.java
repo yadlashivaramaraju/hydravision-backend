@@ -17,7 +17,7 @@ import com.hydravision.repository.BookingRepository;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "*") // Allows Vercel to connect
+@CrossOrigin(origins = "https://hydravision-frontend.vercel.app") // Allows Vercel to connect
 public class AdminController {
 
     @Autowired
