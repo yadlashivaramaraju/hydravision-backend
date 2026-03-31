@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // Keeps your Approve and Delete buttons working!
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("https://hydravision-frontend.onrender.com")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*");
     }

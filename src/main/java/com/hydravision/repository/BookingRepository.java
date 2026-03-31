@@ -10,8 +10,8 @@ import com.hydravision.entity.Booking;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-	List<Booking> findByStatus(String string);
+	List<Booking> findByStatus(String status);
     // Spring Boot automatically writes all the SQL for us just by extending JpaRepository!
 
-	List<Booking> findByScreenIdAndStatus(Long screenId, String string);
+	List<Booking> findByScreenIdAndStatus(Long screenId, String status);
 }

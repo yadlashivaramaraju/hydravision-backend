@@ -1,5 +1,4 @@
 package com.hydravision.service;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -8,24 +7,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
+import com.cloudinary.utils.ObjectUtils; // THIS is the critical one!
 
 @Service
 public class FileStorageService {
 
-    // This grabs the secret URL from your application.properties securely
-    @Value("${cloudinary.url}")
-    private String cloudinaryUrl;
+    private final Cloudinary cloudinary;
 
-    public String saveImageLocally(MultipartFile file) throws IOException {
-        // 1. Connect to your secure Cloudinary Vault
-        Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
+    // This automatically pulls your keys from application.properties!
+    public FileStorageService(
+            @Value("${cloudinary.cloud-name}") String cloudName,
+            @Value("${cloudinary.api-key}") String apiKey,
+            @Value("${cloudinary.api-secret}") String apiSecret) {
+        
+        cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret));
+    }
 
-        // 2. Fire the image up to the cloud
+    // The new Cloudinary Upload Engine
+    public String uploadImageToCloudinary(MultipartFile file) throws IOException {
+        // Uploads the file directly from memory to the cloud
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-
-        // 3. Cloudinary gives us back a permanent, unbreakable URL. 
-        // We return this URL so it gets saved securely into your Aiven database!
-        return uploadResult.get("secure_url").toString();
+        
+        // Returns the permanent, secure https:// URL
+        return uploadResult.get("secure_url").toString(); 
     }
 }
